@@ -1,0 +1,811 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>El Mundo Mágico de los Pegajositos Ecológicos</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;700;800&display=swap">
+<style>
+/* Diseño: un mundo de aventura en una sola columna (máx. 600px). Cielo y colinas de fondo, mapa SVG con caminos, nodos-lugar y compañeros Pegajositos.
+   Look comprometido con una sola paleta luminosa (sin modo oscuro, a propósito: es un mundo de día). */
+:root{
+  --sky:#7fdcff; --sky2:#d8f6ff; --teal:#12b5b0; --leaf:#2fa84f; --leaf2:#7ed957;
+  --sun:#ffd23f; --sun2:#ffb300; --coral:#ff6b6b; --berry:#8f4fe0; --ink:#17375e; --ink2:#46648a;
+  --card:#fffdf4; --line:#cfe9f2; --ok:#22a055; --hint:#e08a00;
+  --f-display:'Baloo 2','Trebuchet MS',system-ui,sans-serif; --f-body:'Nunito','Trebuchet MS',system-ui,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{margin:0;font-family:var(--f-body);font-weight:700;font-size:17px;color:var(--ink);
+  background:linear-gradient(#86ddff,#d8f6ff 55%,#c9f2b5) fixed;background-color:#bfefff;
+  padding-left:max(0px,env(safe-area-inset-left,0px));padding-right:max(0px,env(safe-area-inset-right,0px));overflow-x:hidden}
+#app{max-width:600px;margin:0 auto;min-height:100%;position:relative}
+h1,h2,h3{font-family:var(--f-display);margin:0;line-height:1.05;text-wrap:balance}
+img.pj{display:block;max-width:100%;height:auto;user-select:none;-webkit-user-drag:none;filter:drop-shadow(0 6px 4px rgba(23,55,94,.22))}
+button{font-family:inherit;color:inherit}
+:focus-visible{outline:4px solid #ff7a00;outline-offset:3px;border-radius:14px}
+
+/* pantallas */
+.screen{padding:10px max(16px,env(safe-area-inset-left,0px)) 118px max(16px,env(safe-area-inset-right,0px));animation:in .4s ease both;position:relative}
+@keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* botones */
+.btn{font:800 1.3rem/1 var(--f-display);border:0;border-radius:999px;padding:16px 28px;min-height:58px;cursor:pointer;
+  background:linear-gradient(#ffe066,var(--sun2));color:#5a3200;box-shadow:0 6px 0 #d98200,0 12px 18px rgba(0,0,0,.12);
+  transition:transform .1s,box-shadow .1s;display:inline-flex;align-items:center;justify-content:center;gap:10px;text-align:center}
+.btn:active{transform:translateY(5px);box-shadow:0 1px 0 #d98200}
+.btn.green{background:linear-gradient(#7ee08a,#2fa84f);color:#fff;box-shadow:0 6px 0 #1d7a38,0 12px 18px rgba(0,0,0,.12);text-shadow:0 2px 0 rgba(0,0,0,.18)}
+.btn.green:active{box-shadow:0 1px 0 #1d7a38}
+.btn.white{background:#fff;color:var(--ink);box-shadow:0 6px 0 #b9d6e2,0 12px 18px rgba(0,0,0,.1)}
+.btn.white:active{box-shadow:0 1px 0 #b9d6e2}
+.btn.red{background:linear-gradient(#ff9a8a,#ee5252);color:#fff;box-shadow:0 6px 0 #b83030}
+.btn.small{font-size:1.02rem;padding:10px 18px;min-height:46px}
+.btn.big{font-size:1.75rem;padding:20px 34px;min-height:76px;animation:throb 2.2s ease-in-out infinite}
+@keyframes throb{50%{transform:scale(1.05)}}
+.btn.big:active{animation:none}
+.row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+
+/* cabecera */
+.hud{display:flex;gap:8px;align-items:center;justify-content:space-between;margin:2px 0 10px;flex-wrap:wrap}
+.pill{background:#fff;border-radius:999px;padding:7px 14px;font:800 1.05rem var(--f-display);box-shadow:0 4px 0 #b9d6e2;display:inline-flex;gap:7px;align-items:center}
+.pill b{color:#e29a00}
+.bar{height:16px;border-radius:99px;background:#fff;box-shadow:inset 0 2px 4px rgba(0,0,0,.15);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#7ee08a,#ffd23f);transition:width .6s}
+.title{font-size:clamp(1.9rem,8vw,2.6rem);color:var(--ink);text-shadow:0 3px 0 #fff}
+
+/* inicio */
+.home{min-height:100svh;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding-bottom:40px;overflow:hidden}
+.home .bg{position:fixed;inset:0;width:100%;height:100%;z-index:-1}
+.logo-slot{align-self:flex-start;background:rgba(255,255,255,.85);border:3px dashed #7aa7bd;border-radius:20px;padding:8px 14px;font:700 .85rem var(--f-body);color:var(--ink2);display:flex;gap:8px;align-items:center;min-height:52px}
+.logo-slot img{height:52px;width:auto}
+.logo-ico{width:30px;height:30px;border-radius:50%;background:#e4f6fb;display:grid;place-items:center;font-size:1rem}
+.home h1{font-size:clamp(2.1rem,9.4vw,3.3rem);color:#fff;text-shadow:0 4px 0 #0f7fa3,0 8px 14px rgba(0,60,90,.35);-webkit-text-stroke:1px rgba(8,90,120,.25)}
+.home h1 em{display:block;font-style:normal;color:#ffe45c;text-shadow:0 4px 0 #b27800,0 8px 14px rgba(0,60,90,.35)}
+.hello{background:rgba(255,255,255,.92);border-radius:24px;padding:12px 18px;font-size:1.15rem;max-width:420px;box-shadow:0 5px 0 #b9d6e2;margin:0}
+.crowd{display:grid;grid-template-columns:repeat(4,1fr);gap:4px 6px;width:100%;max-width:480px;align-items:end}
+.crowd .pj{width:100%;animation:bob 3.2s ease-in-out infinite}
+.crowd div:nth-child(2n) .pj{animation-delay:-.8s}.crowd div:nth-child(3n) .pj{animation-delay:-1.6s}.crowd div:nth-child(5n) .pj{animation-delay:-2.2s}
+@keyframes bob{50%{transform:translateY(-9px) rotate(1.5deg)}}
+
+/* mapa */
+.map-wrap{position:relative;border-radius:30px;overflow:hidden;box-shadow:0 8px 0 rgba(23,55,94,.2),0 18px 30px rgba(0,60,90,.2);border:5px solid #fff;background:#bff0ff}
+.map-wrap svg{display:block;width:100%;height:auto}
+.node{cursor:pointer;outline:none}
+.node:focus-visible .nring{stroke:#ff7a00;stroke-width:5}
+.node:active .nbody{transform:translateY(3px)}
+.nbody{transition:transform .12s}
+.node.locked .nbody{filter:grayscale(.85) brightness(1.05);opacity:.8}
+.nring{fill:none;stroke:transparent}
+.node.avail .halo{animation:pulse 1.8s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes pulse{50%{transform:scale(1.18);opacity:.35}}
+.cloud{animation:drift 26s ease-in-out infinite alternate}.cloud.c2{animation-duration:34s;animation-delay:-8s}
+@keyframes drift{to{transform:translateX(40px)}}
+.tw{animation:tw 2.4s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes tw{50%{opacity:.25;transform:scale(.6)}}
+.flow{stroke-dasharray:6 10;animation:flow 1.2s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-16}}
+.hint-line{text-align:center;margin:12px 0 0;color:var(--ink);font-size:1.05rem}
+
+/* lugar */
+.back{margin-bottom:10px}
+.place-head{border-radius:30px;padding:18px 16px 16px;color:#fff;position:relative;overflow:hidden;box-shadow:0 8px 0 rgba(23,55,94,.2)}
+.place-head h2{font-size:clamp(1.8rem,7.5vw,2.4rem);text-shadow:0 3px 0 rgba(0,0,0,.2)}
+.say{display:flex;gap:10px;align-items:flex-end;margin-top:10px}
+.say .pj{width:clamp(96px,28vw,140px);flex:none;animation:bob 3.2s ease-in-out infinite}
+.bubble{position:relative;background:#fff;color:var(--ink);border-radius:24px;padding:14px 16px;font-size:1.08rem;line-height:1.3;box-shadow:0 5px 0 rgba(23,55,94,.15);flex:1;min-width:0}
+.bubble::before{content:"";position:absolute;left:-10px;bottom:22px;border:10px solid transparent;border-right-color:#fff;border-left:0}
+.bubble.ok{background:#e6ffec;box-shadow:0 5px 0 #8fd9a3}.bubble.ok::before{border-right-color:#e6ffec}
+.bubble.hint{background:#fff4d6;box-shadow:0 5px 0 #f1cd77}.bubble.hint::before{border-right-color:#fff4d6}
+.acts{display:grid;gap:12px;margin-top:18px}
+.act{display:flex;align-items:center;gap:14px;background:var(--card);border:0;border-radius:26px;padding:14px 16px;min-height:84px;cursor:pointer;text-align:left;box-shadow:0 6px 0 #b9d6e2;width:100%;transition:transform .1s}
+.act:active{transform:translateY(5px);box-shadow:0 1px 0 #b9d6e2}
+.act .ic{width:58px;height:58px;border-radius:20px;display:grid;place-items:center;font-size:1.9rem;flex:none;background:#e8f7ff}
+.act h3{font-size:1.3rem}.act small{display:block;color:var(--ink2);font-weight:700;font-size:.95rem;margin-top:3px}
+.stars{display:inline-flex;gap:2px;font-size:1.25rem;line-height:1}
+.stars .on{color:#ffb800;text-shadow:0 2px 0 #c98a00}.stars .off{color:#d4dfe6}
+.act .stars{margin-left:auto}
+.medal-row{display:flex;gap:12px;align-items:center;background:#fff;border-radius:24px;padding:12px 16px;margin-top:16px;box-shadow:0 5px 0 #b9d6e2}
+
+/* jugador */
+.ptop{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.dots{display:flex;gap:7px;flex:1;justify-content:flex-end;flex-wrap:wrap}
+.dots i{width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:inset 0 2px 3px rgba(0,0,0,.2)}
+.dots i.d{background:var(--leaf2)}.dots i.c{background:var(--sun);transform:scale(1.25)}
+.coach{display:flex;gap:10px;align-items:flex-end;margin-bottom:14px}
+.coach .pj{width:clamp(84px,24vw,118px);flex:none}
+.coachimg.happy .pj{animation:jump .7s ease both}
+.coachimg.wiggle .pj{animation:wig .6s ease both}
+.coachimg.idle .pj{animation:bob 3.2s ease-in-out infinite}
+@keyframes jump{0%,100%{transform:translateY(0)}30%{transform:translateY(-26px) scale(1.06)}60%{transform:translateY(0) scale(.97,1.03)}80%{transform:translateY(-10px)}}
+@keyframes wig{20%{transform:rotate(-7deg)}50%{transform:rotate(6deg)}80%{transform:rotate(-3deg)}}
+.stage{background:var(--card);border-radius:30px;padding:18px 16px;box-shadow:0 7px 0 #b9d6e2}
+.scene{display:grid;place-items:center;font-size:4.6rem;line-height:1;background:linear-gradient(#e8f9ff,#d4f3c6);border-radius:24px;padding:18px;margin-bottom:14px;min-height:130px}
+.q{font-size:clamp(1.4rem,5.6vw,1.8rem);text-align:center;margin-bottom:14px;color:var(--ink)}
+.opts{display:grid;gap:11px}
+.opt{border:0;border-radius:22px;background:#fff;padding:15px 16px;font:800 1.15rem/1.2 var(--f-body);text-align:left;cursor:pointer;min-height:60px;display:flex;gap:12px;align-items:center;
+  box-shadow:0 5px 0 #b9d6e2,inset 0 0 0 3px #e3f1f7;transition:transform .1s;width:100%}
+.opt:active{transform:translateY(4px);box-shadow:0 1px 0 #b9d6e2}
+.opt.right{background:#dcffe5;box-shadow:0 5px 0 #6fcf8b,inset 0 0 0 4px #2fa84f}
+.opt.nope{background:#fff2dc;color:#8b6a2a;box-shadow:0 5px 0 #efd08d,inset 0 0 0 3px #f6d58f}
+.opt[disabled]{cursor:default}
+.opt .ico{font-size:1.7rem}
+.tf{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tf .opt{justify-content:center;font:800 1.4rem var(--f-display);min-height:78px;text-align:center}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.tile{border:0;border-radius:24px;background:#fff;padding:12px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;min-height:132px;
+  box-shadow:0 5px 0 #b9d6e2,inset 0 0 0 3px #e3f1f7;font:800 1rem/1.15 var(--f-body)}
+.tile:active{transform:translateY(4px)}
+.tile .big{font-size:2.8rem;line-height:1}
+.tile.right{background:#dcffe5;box-shadow:0 5px 0 #6fcf8b,inset 0 0 0 4px #2fa84f}
+.tile.nope{background:#fff2dc;box-shadow:0 5px 0 #efd08d,inset 0 0 0 3px #f6d58f}
+.tile[disabled]{cursor:default}
+.pfoot{display:flex;justify-content:center;margin-top:16px;min-height:62px}
+
+/* clasificar */
+.bins{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.bin{border:0;border-radius:22px 22px 14px 14px;padding:10px 6px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;min-height:132px;
+  font:800 clamp(.8rem,3.5vw,1rem)/1.1 var(--f-display);overflow-wrap:anywhere;box-shadow:0 6px 0 rgba(23,55,94,.25);text-align:center;transition:transform .12s}
+.bin small{font:700 .8rem/1.1 var(--f-body);opacity:.9}
+.bin .lid{width:78%;height:12px;border-radius:8px;background:rgba(0,0,0,.18);margin-bottom:2px}
+.bin .cnt{font-size:1.5rem;min-height:1.7rem;word-break:break-all;line-height:1.1}
+.bin.over,.bin.target{transform:scale(1.07);outline:5px solid #ffb300}
+.chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;min-height:90px;padding:6px 0}
+.chip{touch-action:none;user-select:none;border:0;background:#fff;border-radius:20px;padding:8px 10px;cursor:grab;display:flex;flex-direction:column;align-items:center;gap:2px;
+  min-width:92px;max-width:130px;font:800 .88rem/1.1 var(--f-body);box-shadow:0 5px 0 #b9d6e2,inset 0 0 0 3px #e3f1f7}
+.chip .em{font-size:2.3rem;line-height:1.1}
+.chip.sel{background:#fff4c2;box-shadow:0 5px 0 #efc542,inset 0 0 0 4px #ffb300;transform:translateY(-4px) scale(1.05)}
+.chip.lifted{opacity:.25}
+.chip.shake{animation:wig .5s}
+.ghost{position:fixed;z-index:90;pointer-events:none;transform:translate(-50%,-60%) scale(1.12) rotate(-4deg);box-shadow:0 14px 20px rgba(0,0,0,.25)}
+.tip{text-align:center;color:var(--ink2);font-size:.98rem;margin:0 0 8px}
+
+/* resultado, personajes, logros */
+.result{text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px}
+.result .pj{width:clamp(140px,44vw,210px);animation:jump 1.1s ease .1s both,bob 3.2s ease-in-out 1.2s infinite}
+.big-stars{font-size:3.4rem;display:flex;gap:6px}
+.big-stars span{display:inline-block;animation:pop .55s cubic-bezier(.3,1.7,.5,1) both}
+.big-stars span:nth-child(2){animation-delay:.2s}.big-stars span:nth-child(3){animation-delay:.4s}
+@keyframes pop{from{transform:scale(0) rotate(-40deg)}}
+.medal{width:120px;height:120px;border-radius:50%;display:grid;place-items:center;font-size:3.6rem;background:radial-gradient(#fff2a8,#ffc928);border:6px solid #fff;box-shadow:0 8px 0 #d99a00,0 0 0 8px rgba(255,210,63,.4);animation:pop .8s .5s cubic-bezier(.3,1.7,.5,1) both}
+.medal.off{background:#e6eef2;box-shadow:0 5px 0 #c3d3db;filter:grayscale(1);opacity:.7;animation:none}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.pcard{border:0;border-radius:28px;background:var(--card);padding:14px 10px 14px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:0 6px 0 #b9d6e2;text-align:center;position:relative}
+.pcard:active{transform:translateY(5px);box-shadow:0 1px 0 #b9d6e2}
+.pcard .pj{width:78%;max-height:150px;object-fit:contain}
+.pcard h3{font-size:1.2rem}
+.tag{display:inline-block;border-radius:99px;padding:3px 12px;font:800 .9rem var(--f-display);color:#fff;background:var(--teal)}
+.sheet-bg{position:fixed;inset:0;background:rgba(10,50,80,.55);z-index:60;display:grid;place-items:end center;animation:fade .25s both}
+@keyframes fade{from{opacity:0}}
+.sheet{width:min(600px,100%);background:var(--card);border-radius:34px 34px 0 0;padding:20px max(18px,env(safe-area-inset-left,0px)) calc(24px + env(safe-area-inset-bottom,0px));text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px;animation:up .35s cubic-bezier(.2,1.2,.4,1) both;max-height:92svh;overflow:auto}
+.sheet.mid{border-radius:34px;margin:auto 16px}
+@keyframes up{from{transform:translateY(60px);opacity:0}}
+.sheet .pj{width:min(190px,48vw)}
+.sheet h2{font-size:1.9rem}
+.sheet p{margin:0;font-size:1.1rem;line-height:1.35}
+.badges{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px}
+.badge{background:var(--card);border-radius:24px;padding:12px 10px;text-align:center;box-shadow:0 5px 0 #b9d6e2;display:flex;flex-direction:column;align-items:center;gap:4px}
+.badge .bi{font-size:2.3rem;width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(#fff6c0,#ffd23f);box-shadow:0 4px 0 #d99a00}
+.badge.off .bi{background:#e6eef2;box-shadow:0 4px 0 #c3d3db;filter:grayscale(1);opacity:.6}
+.badge b{font:800 1.05rem var(--f-display)}.badge small{font-size:.85rem;color:var(--ink2);font-weight:700}
+.sec{font-size:1.5rem;margin:22px 0 4px;text-shadow:0 2px 0 #fff}
+.toast{position:fixed;left:50%;bottom:calc(104px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#fff;border-radius:22px;padding:12px 18px;box-shadow:0 6px 0 #b9d6e2,0 14px 24px rgba(0,0,0,.2);z-index:70;max-width:min(92vw,420px);text-align:center;animation:up .3s both}
+
+/* navegación inferior */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;justify-content:center;padding:0 max(10px,env(safe-area-inset-left,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-right,0px));pointer-events:none}
+.nav nav{pointer-events:auto;width:100%;max-width:560px;background:#fff;border-radius:30px;display:grid;grid-template-columns:repeat(4,1fr);padding:6px;gap:4px;box-shadow:0 6px 0 #b9d6e2,0 14px 28px rgba(0,60,90,.25)}
+.nav button{border:0;background:transparent;border-radius:24px;padding:7px 2px 6px;display:flex;flex-direction:column;align-items:center;gap:1px;font:800 .8rem/1.1 var(--f-display);cursor:pointer;min-height:58px;color:var(--ink2)}
+.nav button .ni{font-size:1.5rem;line-height:1.1}
+.nav button.on{background:linear-gradient(#ffe066,var(--sun2));color:#5a3200;box-shadow:0 3px 0 #d98200}
+.nav button:active{transform:translateY(2px)}
+
+/* confeti */
+#fx{position:fixed;inset:0;pointer-events:none;z-index:100;overflow:hidden}
+#fx i{position:absolute;top:-20px;width:11px;height:16px;border-radius:3px;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+.hide{display:none!important}
+
+@media(min-width:700px){.screen{padding-top:22px}.hello{font-size:1.3rem}.crowd{gap:8px 14px}}
+@media(max-width:360px){.btn.big{font-size:1.45rem;padding:16px 20px}.chip{min-width:84px}.bin{min-height:120px}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.001s!important}}
+</style>
+
+<div id="app"></div>
+<div id="fx" aria-hidden="true"></div>
+<div id="overlay"></div>
+
+<script>
+/* ============================================================
+   DATOS EDITABLES (personajes, escenarios, actividades, premios)
+   Cambia aquí nombres, valores y textos sin tocar el resto.
+   ============================================================ */
+const CONFIG = {
+  titulo: 'El Mundo Mágico de los Pegajositos Ecológicos',
+  logoColegio: '',          // Pega aquí la URL o data:URI del logo del colegio. Vacío = muestra un espacio reservado.
+  storageKey: 'pegajositos-ecologicos-v1'
+};
+
+/* PERSONAJES: imagen = img/p{id}.webp. NOMBRES Y VALORES PROVISIONALES: reemplázalos por los oficiales. */
+const CHARS = [
+  {id:1, name:'Pegajosito Corazón', value:'Amistad',       color:'#ee4b4b', phrase:'¡Un amigo hace todo más bonito! Yo reparto abrazos y buenas ideas.'},
+  {id:2, name:'Pegajosito Rosita',  value:'Respeto',       color:'#d9407e', phrase:'Con respeto y palabras amables, todos nos sentimos bien.'},
+  {id:3, name:'Pegajosito Verde',   value:'Cuidado del planeta', color:'#2fa84f', phrase:'¡Me encanta reciclar! Cada cosa en su lugar cuida nuestro valle.'},
+  {id:4, name:'Pegajosito Azul',    value:'Cuidado del agua', color:'#2a7fe0', phrase:'Cada gota cuenta. ¡Cuidemos el agua del río!'},
+  {id:5, name:'Pegajosito Morado',  value:'Responsabilidad', color:'#8f4fe0', phrase:'Cumplir con mis tareas me hace sentir muy orgulloso.'},
+  {id:6, name:'Pegajosito Amarillo',value:'Solidaridad',   color:'#e8a600', phrase:'Cuando ayudamos juntos, ¡todo es más fácil!'},
+  {id:7, name:'Pegajosito Lima',    value:'Honestidad',    color:'#6aa90f', phrase:'Decir la verdad siempre es lo mejor, aunque cueste un poquito.'},
+  {id:8, name:'Pegajosito Rojo',    value:'Gratitud',      color:'#e03b3b', phrase:'¡Gracias, gracias, gracias! Dar las gracias llena el corazón.'}
+];
+
+const MSG_OK    = ['¡Excelente! ¡Lo lograste!','¡Muy bien, explorador!','¡Tu decisión ayuda a nuestro planeta!','¡Has aprendido algo maravilloso!'];
+const MSG_RETRY = ['¡Casi lo consigues! Vamos a intentarlo otra vez.','No pasa nada. ¡Aprendamos juntos!','Mira esta pista y vuelve a intentarlo.'];
+
+/* LUGARES Y ACTIVIDADES.
+   Tipos: quiz (preguntas), tf (verdadero/falso), sort (clasificar), situation (decidir), find (encontrar). */
+const PLACES = [
+ { id:'valle', name:'Valle del Reciclaje', short:'Reciclaje', char:3, helpers:[3,8], color:'#2fa84f', color2:'#7ed957', x:110, y:600,
+   story:'¡Hola, explorador! Soy Pegajosito Verde. Alguien dejó basura por todo el valle. ¿Me ayudas a separarla y a cuidar nuestro planeta?',
+   acts:[
+    {id:'valle-sort', type:'sort', icon:'♻️', title:'¡A separar la basura!', sub:'Cada cosa en su caneca',
+     intro:'Toca un objeto y luego su caneca. También puedes arrastrarlo.',
+     bins:[{id:'blanco',label:'Blanca',sub:'Reciclables',color:'#f5f7f8',fg:'#3b4a57'},
+           {id:'verde', label:'Verde', sub:'Orgánicos',  color:'#5ccf6a',fg:'#0d4a1d'},
+           {id:'negro', label:'Negra', sub:'No reciclables',color:'#4b5160',fg:'#fff'}],
+     items:[
+      {id:'a',label:'Botella de plástico limpia',icon:'🧴',bin:'blanco',hint:'El plástico limpio se puede reciclar.'},
+      {id:'b',label:'Cáscara de banano',icon:'🍌',bin:'verde',hint:'Los restos de comida se vuelven abono.'},
+      {id:'c',label:'Periódico',icon:'📰',bin:'blanco',hint:'El papel seco y limpio se recicla.'},
+      {id:'d',label:'Servilleta usada',icon:'🧻',bin:'negro',hint:'El papel sucio o con grasa no se recicla.'},
+      {id:'e',label:'Lata de atún',icon:'🥫',bin:'blanco',hint:'El metal se recicla.'},
+      {id:'f',label:'Restos de manzana',icon:'🍎',bin:'verde',hint:'Las frutas y verduras son residuos orgánicos.'},
+      {id:'g',label:'Caja de cartón',icon:'📦',bin:'blanco',hint:'El cartón limpio y seco se recicla.'},
+      {id:'h',label:'Envoltura de dulce',icon:'🍬',bin:'negro',hint:'Las envolturas no se reciclan. ¡Mejor generar menos basura!'}
+     ]},
+    {id:'valle-quiz', type:'quiz', icon:'💡', title:'Las 3 R mágicas', sub:'Preguntas ilustradas',
+     qs:[
+      {icon:'♻️', q:'¿Cuáles son las 3 R del cuidado del planeta?', opts:['Reducir, reutilizar y reciclar','Romper, rodar y rebotar','Rápido, rojo y redondo'], a:0, hint:'Son tres acciones que ayudan a tener menos basura.', why:'Reducir, reutilizar y reciclar: tres acciones para cuidar el planeta.'},
+      {icon:'🫙', q:'Tienes un frasco de vidrio limpio. ¿Qué haces?', opts:['Lo tiro al río','Lo uso de lapicero o florero','Lo rompo en el parque'], a:1, hint:'Piensa en darle un nuevo uso.', why:'Reutilizar es darle una nueva vida a las cosas.'},
+      {icon:'🍌', q:'¿En qué caneca va la cáscara de banano?', opts:['Blanca','Verde','Negra'], a:1, hint:'Es un residuo orgánico: se pudre y se convierte en abono.', why:'La caneca verde es para residuos orgánicos.'},
+      {icon:'🛍️', q:'¿Cómo puedes reducir la basura?', opts:['Usando una bolsa de tela','Pidiendo muchas bolsas','Botando todo junto'], a:0, hint:'Reducir es usar menos cosas de un solo uso.', why:'Una bolsa de tela se usa muchas veces.'}
+     ]},
+    {id:'valle-tf', type:'tf', icon:'🌿', title:'¿Verdadero o falso?', sub:'Pon a prueba lo aprendido',
+     qs:[
+      {icon:'🧴', q:'Una botella de plástico limpia se puede reciclar.', a:true,  why:'¡Sí! Limpia y seca, el plástico se recicla.'},
+      {icon:'🌳', q:'Está bien tirar basura en el campo si nadie ve.', a:false, why:'La basura daña a los animales y a las plantas. Siempre va en su caneca.'},
+      {icon:'🍎', q:'Con restos de frutas se puede hacer abono.', a:true,  why:'¡Claro! Los restos orgánicos alimentan la tierra.'},
+      {icon:'🗑️', q:'Todo se debe tirar en la misma caneca.', a:false, why:'Separar ayuda a que se pueda reciclar más.'}
+     ]}
+   ]},
+ { id:'rio', name:'Río de las Buenas Acciones', short:'Agua', char:4, helpers:[4,6], color:'#2a7fe0', color2:'#5fd0ff', x:290, y:490,
+   story:'¡Hola! Soy Pegajosito Azul. El río está tristísimo: están gastando y ensuciando mucha agua. ¡Ayúdame a cuidarla con buenas acciones!',
+   acts:[
+    {id:'rio-find', type:'find', icon:'🔎', title:'Encuentra el desperdicio', sub:'Busca 3 formas de gastar agua de más',
+     prompt:'Toca las 3 cosas que gastan agua de más.', need:3,
+     tiles:[
+      {icon:'🚿',label:'Ducha abierta sin nadie',waste:true,why:'Una ducha abierta sin usar gasta muchísima agua.'},
+      {icon:'🪥',label:'Cerrar el grifo al cepillarte',waste:false},
+      {icon:'🚰',label:'Grifo goteando',waste:true,why:'¡Las gotas se juntan! Hay que pedir que lo arreglen.'},
+      {icon:'🌧️',label:'Guardar agua de lluvia',waste:false},
+      {icon:'🧽',label:'Manguera abierta lavando la acera',waste:true,why:'Es mejor barrer y usar un balde.'},
+      {icon:'🪣',label:'Regar con un balde',waste:false}
+     ]},
+    {id:'rio-sit', type:'situation', icon:'🤔', title:'¿Qué harías tú?', sub:'Decide y descubre qué pasa',
+     qs:[
+      {icon:'🛍️', text:'Ves una bolsa de plástico flotando en el río.', ch:[
+        {t:'Pido ayuda a un adulto para sacarla',good:true,res:'¡Genial! El río quedó más limpio y los peces están felices.'},
+        {t:'La dejo ahí, nadie me vio',good:false,res:'La bolsa puede lastimar a los peces. ¿Qué otra cosa podrías hacer?'},
+        {t:'Tiro otra bolsa también',good:false,res:'Eso ensucia más el agua. ¡Busquemos una mejor idea!'}]},
+      {icon:'🪥', text:'Te estás cepillando los dientes.', ch:[
+        {t:'Cierro el grifo mientras me cepillo',good:true,res:'¡Muy bien! Ahorraste muchos litros de agua.'},
+        {t:'Dejo el grifo abierto todo el rato',good:false,res:'El agua se va por el desagüe sin que la uses. ¡Intenta otra opción!'}]},
+      {icon:'🌱', text:'Quieres regar las plantas del jardín.', ch:[
+        {t:'Uso agua de lluvia guardada en un balde',good:true,res:'¡Qué buena idea! Cuidas el agua y las plantas crecen.'},
+        {t:'Dejo la manguera corriendo toda la tarde',good:false,res:'Se gasta demasiada agua. ¿Cómo la podrías ahorrar?'}]}
+     ]},
+    {id:'rio-quiz', type:'quiz', icon:'💧', title:'Gotitas de saber', sub:'Preguntas ilustradas',
+     qs:[
+      {icon:'🏞️', q:'¿Qué NO debe ir al río?', opts:['Agua limpia de lluvia','Basura','Peces'], a:1, hint:'Piensa en lo que ensucia el agua.', why:'La basura contamina el agua y daña a los animales.'},
+      {icon:'🌽', q:'¿Para qué necesitan agua las plantas?', opts:['Para crecer','Para dormir','Para cantar'], a:0, hint:'Sin agua se secan.', why:'Sin agua las plantas no pueden crecer.'},
+      {icon:'🚰', q:'Si ves un grifo goteando, ¿qué haces?', opts:['Lo ignoro','Aviso a un adulto','Lo abro más'], a:1, hint:'Una gotita parece poco, pero se suma.', why:'Avisar ayuda a que lo arreglen y no se desperdicie agua.'}
+     ]}
+   ]},
+ { id:'bosque', name:'Bosque de la Amistad', short:'Amistad', char:1, helpers:[1,2], color:'#e0457b', color2:'#ff9ec0', x:105, y:375,
+   story:'¡Hola, amigo! Soy Pegajosito Corazón. En el Bosque de la Amistad todos nos tratamos con cariño y respeto. ¿Me ayudas a elegir lo mejor?',
+   acts:[
+    {id:'bosque-sit', type:'situation', icon:'🤝', title:'Historias de amigos', sub:'Elige qué hará el personaje',
+     qs:[
+      {icon:'🧍', text:'Un compañero nuevo está solito en el recreo.', ch:[
+        {t:'Lo invito a jugar con nosotros',good:true,res:'¡Se puso feliz! Ahora tiene un nuevo amigo.'},
+        {t:'Hago como que no lo veo',good:false,res:'Se quedó solito y triste. ¿Qué otra cosa podrías hacer?'},
+        {t:'Me burlo de su ropa',good:false,res:'Burlarse lastima. ¡Mejor busquemos una forma amable!'}]},
+      {icon:'🧸', text:'Dos amigos quieren el mismo juguete.', ch:[
+        {t:'Proponemos turnarnos',good:true,res:'¡Perfecto! Los dos jugaron y siguieron siendo amigos.'},
+        {t:'Se lo quito a uno',good:false,res:'Quitar las cosas enoja a los demás. ¡Prueba otra idea!'},
+        {t:'Lo escondo para que nadie juegue',good:false,res:'Así nadie se divierte. ¿Y si compartimos?'}]},
+      {icon:'😢', text:'Tu amigo se equivocó en la clase y está triste.', ch:[
+        {t:'Le digo que no pasa nada y lo animo',good:true,res:'¡Qué buen amigo! Se sintió mucho mejor.'},
+        {t:'Me río de su error',good:false,res:'Eso lo pondría más triste. ¡Intenta otra opción!'},
+        {t:'Le cuento a todos lo que pasó',good:false,res:'Eso no es respetuoso. ¿Cómo lo podrías ayudar?'}]}
+     ]},
+    {id:'bosque-quiz', type:'quiz', icon:'🌸', title:'Palabras mágicas', sub:'Preguntas ilustradas',
+     qs:[
+      {icon:'🙏', q:'¿Qué palabra mágica usamos para pedir algo?', opts:['Dame ya','Por favor','Quiero'], a:1, hint:'Es una palabra muy amable.', why:'"Por favor" hace que pedir sea más bonito.'},
+      {icon:'👂', q:'Cuando un compañero habla, yo…', opts:['Lo escucho con atención','Hablo más fuerte','Me voy a jugar'], a:0, hint:'Respetar es dejar hablar al otro.', why:'Escuchar es una forma de respetar.'},
+      {icon:'🎁', q:'Un amigo te ayudó. ¿Qué dices?', opts:['Nada','Gracias','Eso era obvio'], a:1, hint:'Es una palabra que alegra el corazón.', why:'Dar las gracias muestra gratitud.'},
+      {icon:'💗', q:'Respetar es…', opts:['Tratar bien a los demás','Ganar siempre','Hacer lo que quiera'], a:0, hint:'Piensa en cómo te gusta que te traten.', why:'Respetar es tratar a los demás como nos gusta ser tratados.'}
+     ]},
+    {id:'bosque-tf', type:'tf', icon:'🌳', title:'¿Verdadero o falso?', sub:'Convivencia en el bosque',
+     qs:[
+      {icon:'🧑‍🤝‍🧑', q:'Todos merecemos jugar y ser tratados con cariño.', a:true, why:'¡Así es! Todos somos importantes.'},
+      {icon:'😠', q:'Si estoy enojado, puedo gritarle a mi amigo.', a:false, why:'Podemos respirar hondo y hablar con calma.'},
+      {icon:'🤗', q:'Compartir hace más felices a los amigos.', a:true, why:'¡Sí! Compartir une a las personas.'}
+     ]}
+   ]},
+ { id:'montana', name:'Montaña de los Valores', short:'Valores', char:6, helpers:[5,7], color:'#8f4fe0', color2:'#c7a3ff', x:295, y:265, needMedals:2,
+   story:'¡Hola! Soy Pegajosito Amarillo. Para llegar a la cima de la Montaña hay que practicar valores: responsabilidad, solidaridad y honestidad. ¡Tú puedes!',
+   acts:[
+    {id:'montana-sort', type:'sort', icon:'⛰️', title:'Cada acción, su valor', sub:'Clasifica las buenas acciones',
+     intro:'Toca una acción y luego el valor que muestra. También puedes arrastrarla.',
+     bins:[{id:'resp',label:'Responsabilidad',sub:'Cumplir',color:'#a98bff',fg:'#2a1066'},
+           {id:'sol', label:'Solidaridad',sub:'Ayudar',color:'#ffd94d',fg:'#5a3f00'},
+           {id:'hon', label:'Honestidad',sub:'Ser sincero',color:'#7be3d4',fg:'#06433b'}],
+     items:[
+      {id:'a',label:'Guardo mis juguetes',icon:'🧸',bin:'resp',hint:'Cuidar y ordenar mis cosas es ser responsable.'},
+      {id:'b',label:'Ayudo a quien se cayó',icon:'🩹',bin:'sol',hint:'Ayudar a otros es solidaridad.'},
+      {id:'c',label:'Devuelvo la moneda que encontré',icon:'🪙',bin:'hon',hint:'Devolver lo ajeno es ser honesto.'},
+      {id:'d',label:'Hago la tarea a tiempo',icon:'📚',bin:'resp',hint:'Cumplir con mis deberes es responsabilidad.'},
+      {id:'e',label:'Comparto mi lonchera',icon:'🥪',bin:'sol',hint:'Compartir con quien lo necesita es solidaridad.'},
+      {id:'f',label:'Digo la verdad aunque me dé pena',icon:'🗣️',bin:'hon',hint:'Decir la verdad siempre es honestidad.'}
+     ]},
+    {id:'montana-sit', type:'situation', icon:'🧭', title:'El camino correcto', sub:'Decide y descubre qué pasa',
+     qs:[
+      {icon:'🏺', text:'Rompiste sin querer un florero del salón.', ch:[
+        {t:'Cuento lo que pasó y ayudo a recoger',good:true,res:'¡Qué valiente! Decir la verdad te hizo sentir tranquilo.'},
+        {t:'Escondo los pedazos',good:false,res:'Esconderlo no arregla nada. ¿Qué te haría sentir mejor?'},
+        {t:'Le echo la culpa a otro',good:false,res:'Eso no es justo para tu compañero. ¡Piensa otra opción!'}]},
+      {icon:'🎒', text:'Un compañero olvidó sus colores y no puede pintar.', ch:[
+        {t:'Le presto algunos de mis colores',good:true,res:'¡Qué solidario! Pintaron juntos y todo quedó hermoso.'},
+        {t:'Le digo que esa es su culpa',good:false,res:'Eso lo pone triste. ¿Cómo lo podrías ayudar?'}]},
+      {icon:'🐶', text:'Te toca darle comida y agua a la mascota del salón.', ch:[
+        {t:'Lo hago cada día, aunque tenga pereza',good:true,res:'¡Muy responsable! La mascota está feliz y sana.'},
+        {t:'Me olvido y que lo haga otro',good:false,res:'La mascota podría quedarse con hambre. ¡Prueba otra opción!'}]}
+     ]},
+    {id:'montana-quiz', type:'quiz', icon:'⭐', title:'Cima de los valores', sub:'Preguntas ilustradas',
+     qs:[
+      {icon:'🗣️', q:'Ser honesto es…', opts:['Decir la verdad','Inventar cuentos','Quedarse callado siempre'], a:0, hint:'Pensemos en ser sinceros.', why:'La honestidad es decir la verdad.'},
+      {icon:'🤲', q:'Ser solidario es…', opts:['Ayudar a quien lo necesita','Guardar todo para mí','Mirar sin hacer nada'], a:0, hint:'Se trata de ayudar a otros.', why:'La solidaridad es ayudar a los demás.'},
+      {icon:'📅', q:'Ser responsable es…', opts:['Cumplir con mis tareas','Dejar todo para mañana','Que otros lo hagan'], a:0, hint:'Se trata de cumplir.', why:'Ser responsable es cumplir con lo que me toca.'}
+     ]}
+   ]}
+];
+
+const BADGES = [
+  {id:'first',  ic:'🌟', name:'Primeros pasos',    desc:'Completa una actividad',        ok:()=>doneCount()>=1},
+  {id:'sorter', ic:'♻️', name:'Gran clasificador', desc:'Separa todo sin errores',        ok:()=>S.done['valle-sort']===3},
+  {id:'reci',   ic:'🌿', name:'Amigo del valle',   desc:'Medalla del Valle del Reciclaje', ok:()=>!!S.medals.valle},
+  {id:'agua',   ic:'💧', name:'Guardián del agua', desc:'Medalla del Río',                ok:()=>!!S.medals.rio},
+  {id:'ami',    ic:'💗', name:'Corazón de amigo',  desc:'Medalla del Bosque',             ok:()=>!!S.medals.bosque},
+  {id:'val',    ic:'⛰️', name:'Escalador de valores', desc:'Medalla de la Montaña',        ok:()=>!!S.medals.montana},
+  {id:'stars',  ic:'✨', name:'Lluvia de estrellas',desc:'Consigue 12 estrellas',          ok:()=>starCount()>=12},
+  {id:'meet',   ic:'🤗', name:'Amigo de todos',    desc:'Conoce a los 8 Pegajositos',     ok:()=>CHARS.every(c=>S.seen[c.id])},
+  {id:'all',    ic:'🏆', name:'Gran explorador',   desc:'Consigue las 4 medallas',        ok:()=>medalCount()>=PLACES.length}
+];
+
+/* ============================================================
+   ESTADO Y PROGRESO (localStorage, sin cuentas ni datos personales)
+   ============================================================ */
+const KEY = CONFIG.storageKey;
+function loadState(){ try{ const o=JSON.parse(localStorage.getItem(KEY)||'{}'); return {done:o.done||{}, medals:o.medals||{}, seen:o.seen||{}}; }catch(e){ return {done:{},medals:{},seen:{}}; } }
+function saveState(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+let S = loadState();
+const starCount = () => Object.values(S.done).reduce((a,b)=>a+b,0);
+const doneCount = () => Object.keys(S.done).length;
+const medalCount = () => Object.keys(S.medals).length;
+const points = () => starCount()*10 + medalCount()*20;
+const totalActs = () => PLACES.reduce((a,p)=>a+p.acts.length,0);
+const placeById = id => PLACES.find(p=>p.id===id);
+const charById = id => CHARS.find(c=>c.id===id);
+const isLocked = p => !!p.needMedals && medalCount() < p.needMedals;
+const placeDone = p => p.acts.every(a=>S.done[a.id]);
+const rnd = a => a[Math.floor(Math.random()*a.length)];
+const reduceMotion = () => window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+const esc = s => String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+let V = {screen:'home', place:null, run:null, res:null, sheet:null, confirm:false};
+let lastKey = '';
+
+/* ============================================================
+   PIEZAS VISUALES
+   ============================================================ */
+const cimg = (id, cls='') => { const c=charById(id); return `<img class="pj ${cls}" src="img/p${id}.webp" alt="${esc(c.name)}" draggable="false">`; };
+const starsHTML = (n,max=3) => `<span class="stars" aria-label="${n} de ${max} estrellas">${Array.from({length:max},(_,i)=>`<span class="${i<n?'on':'off'}">★</span>`).join('')}</span>`;
+
+function tree(x,y,s=1,c1='#2f9e4a',c2='#46bf5f'){
+  return `<g transform="translate(${x} ${y}) scale(${s})"><rect x="-4" y="-6" width="8" height="26" rx="3" fill="#8a5a33"/><circle cx="0" cy="-22" r="22" fill="${c1}"/><circle cx="-14" cy="-10" r="15" fill="${c2}"/><circle cx="14" cy="-10" r="15" fill="${c2}"/><circle cx="-6" cy="-28" r="8" fill="#fff" opacity=".13"/></g>`;
+}
+function flower(x,y,c){ return `<g transform="translate(${x} ${y})"><rect x="-1" y="0" width="2" height="9" fill="#2f9e4a"/><circle r="4" cx="0" cy="-1" fill="${c}"/><circle r="1.8" cx="0" cy="-1" fill="#fff6a0"/></g>`; }
+function sparkle(x,y,d){ return `<path class="tw" style="animation-delay:${d}s" d="M${x} ${y-7} L${x+2} ${y-2} L${x+7} ${y} L${x+2} ${y+2} L${x} ${y+7} L${x-2} ${y+2} L${x-7} ${y} L${x-2} ${y-2}Z" fill="#fff9b0"/>`; }
+
+/* El mundo mágico: se usa de fondo en el inicio y como base del mapa. viewBox 0 0 400 700 */
+function worldSVG(){
+  let s = `<defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6fd6ff"/><stop offset=".5" stop-color="#bff0ff"/><stop offset="1" stop-color="#eefcff"/></linearGradient>
+    <linearGradient id="rv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7ee0ff"/><stop offset="1" stop-color="#2aa9ea"/></linearGradient>
+    <radialGradient id="glow"><stop offset="0" stop-color="#fff6b0"/><stop offset="1" stop-color="#fff6b0" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="400" height="700" fill="url(#sky)"/>
+  <circle cx="338" cy="58" r="66" fill="url(#glow)"/><circle cx="338" cy="58" r="26" fill="#ffe066"/>
+  <g class="cloud c1"><ellipse cx="70" cy="58" rx="36" ry="14" fill="#fff"/><ellipse cx="94" cy="48" rx="26" ry="17" fill="#fff"/><ellipse cx="48" cy="50" rx="22" ry="12" fill="#fff"/></g>
+  <g class="cloud c2"><ellipse cx="225" cy="96" rx="30" ry="11" fill="#fff" opacity=".9"/><ellipse cx="245" cy="88" rx="20" ry="13" fill="#fff" opacity=".9"/></g>
+  <polygon points="-10,255 70,110 150,255" fill="#a7d6f0"/><polygon points="40,255 140,150 240,255" fill="#bfe3f5"/>
+  <polygon points="110,255 205,70 300,255" fill="#8cc6e8"/><polygon points="205,70 232,118 214,112 205,126 190,110 178,118" fill="#fff"/>
+  <polygon points="260,255 345,120 420,255" fill="#a7d6f0"/><polygon points="345,120 362,150 349,145 340,156 330,142 322,150" fill="#fff"/>
+  <path d="M-10,250 Q90,205 200,240 T410,228 V700 H-10Z" fill="#92e06e"/>
+  <path d="M-10,350 Q110,312 230,348 T410,338 V700 H-10Z" fill="#74d35e"/>
+  <path d="M-10,470 Q150,430 300,468 T410,458 V700 H-10Z" fill="#5cc450"/>
+  <rect x="196" y="140" width="14" height="112" rx="7" fill="#9fe3ff" opacity=".9"/>
+  <rect class="flow" x="200" y="146" width="6" height="100" rx="3" fill="none" stroke="#fff" stroke-width="3"/>
+  <path d="M202,252 C150,330 340,390 290,490 C255,560 170,585 215,650 C230,680 232,695 235,712" fill="none" stroke="#35b6f0" stroke-width="40" stroke-linecap="round"/>
+  <path d="M202,252 C150,330 340,390 290,490 C255,560 170,585 215,650 C230,680 232,695 235,712" fill="none" stroke="url(#rv)" stroke-width="30" stroke-linecap="round"/>
+  <path class="flow" d="M202,252 C150,330 340,390 290,490 C255,560 170,585 215,650 C230,680 232,695 235,712" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="3" stroke-linecap="round"/>`;
+  [[28,318,1],[372,405,1.1],[30,520,.9],[368,640,1],[30,690,1.1],[362,300,.8],[160,430,.7],[345,560,.8]].forEach(t=>s+=tree(t[0],t[1],t[2]));
+  [[70,420,'#ff7aa8'],[150,500,'#ffd23f'],[250,590,'#fff'],[330,330,'#ff7aa8'],[60,560,'#ffd23f'],[180,300,'#fff'],[345,500,'#ffd23f'],[200,690,'#ff7aa8'],[90,250,'#ffd23f'],[330,200,'#fff']].forEach(f=>s+=flower(f[0],f[1],f[2]));
+  [[50,140,0],[300,160,.7],[150,330,1.3],[360,350,.4],[40,450,1.8],[250,630,1],[380,560,2],[110,690,.5]].forEach(p=>s+=sparkle(p[0],p[1],p[2]));
+  return s;
+}
+const TRAIL = 'M110,600 C200,612 330,570 290,490 C250,420 60,450 105,375 C140,320 330,335 295,265 C270,215 80,235 105,165';
+
+/* Ilustraciones propias de cada lugar (centradas en 0,0) */
+function placeArt(id){
+  switch(id){
+   case 'valle': return `<ellipse cx="0" cy="34" rx="52" ry="10" fill="#3b9a45" opacity=".5"/>
+     <rect x="-30" y="-20" width="60" height="46" rx="6" fill="#fff3c9"/><polygon points="-38,-18 0,-52 38,-18" fill="#2fa84f"/><polygon points="-38,-18 0,-52 0,-44 -30,-18" fill="#58c76b"/>
+     <rect x="-8" y="2" width="16" height="24" rx="5" fill="#8a5a33"/><circle cx="0" cy="-26" r="7" fill="#fff"/><path d="M-3,-27 l3,-4 l3,4 m-3,-4 v7" stroke="#2fa84f" stroke-width="2" fill="none"/>
+     <rect x="-50" y="14" width="14" height="20" rx="3" fill="#f5f7f8" stroke="#8b99a5" stroke-width="2"/><rect x="36" y="14" width="14" height="20" rx="3" fill="#4b5160"/><rect x="-47" y="19" width="8" height="3" rx="1.5" fill="#cbd5dc"/>
+     <rect x="-16" y="30" width="0" height="0"/>`;
+   case 'rio': return `<ellipse cx="0" cy="26" rx="56" ry="14" fill="#1f95d8" opacity=".35"/>
+     <path d="M-52,22 Q0,-30 52,22 L52,32 L-52,32Z" fill="#b97a45"/><path d="M-52,22 Q0,-30 52,22" fill="none" stroke="#e1a56a" stroke-width="7" stroke-linecap="round"/>
+     <path d="M-36,-2 v26 M-18,-14 v34 M0,-17 v37 M18,-14 v34 M36,-2 v26" stroke="#8a5a33" stroke-width="4"/>
+     <path d="M-60,34 q8,-8 16,0 t16,0 t16,0 t16,0 t16,0 t16,0" stroke="#fff" stroke-width="3" fill="none" opacity=".8"/>
+     <path d="M30,-30 q6,10 0,14 q-6,-4 0,-14z" fill="#5fd0ff" stroke="#fff" stroke-width="2"/>`;
+   case 'bosque': return `<ellipse cx="0" cy="34" rx="54" ry="10" fill="#2f8a3a" opacity=".45"/>
+     <rect x="-7" y="-4" width="14" height="38" rx="5" fill="#8a5a33"/><circle cx="0" cy="-26" r="30" fill="#2f9e4a"/><circle cx="-24" cy="-8" r="20" fill="#46bf5f"/><circle cx="24" cy="-8" r="20" fill="#46bf5f"/>
+     <path d="M0,-18 c-10,-12 -22,2 0,16 c22,-14 10,-28 0,-16z" fill="#ff6b8e"/><circle cx="-18" cy="-30" r="3" fill="#ffd23f"/><circle cx="20" cy="-34" r="3" fill="#ffd23f"/>
+     <rect x="30" y="16" width="22" height="18" rx="3" fill="#ffe8b3"/><polygon points="27,17 41,5 55,17" fill="#e0457b"/>`;
+   case 'montana': return `<ellipse cx="0" cy="34" rx="58" ry="9" fill="#5a3fa8" opacity=".35"/>
+     <polygon points="-56,34 -14,-38 28,34" fill="#9a78e8"/><polygon points="-14,-38 4,-8 -6,-12 -14,-2 -24,-12 -32,-8" fill="#fff"/>
+     <polygon points="8,34 38,-10 66,34" fill="#b69cf5"/><polygon points="38,-10 48,6 40,3 36,10 30,2 26,6" fill="#fff"/>
+     <line x1="-14" y1="-38" x2="-14" y2="-58" stroke="#5a3a1a" stroke-width="3"/><polygon points="-14,-58 8,-52 -14,-46" fill="#ff5a5a"/>`;
+   default: return `<ellipse cx="0" cy="12" rx="56" ry="26" fill="#6fd65e"/><ellipse cx="0" cy="8" rx="50" ry="20" fill="#8ae872"/>
+     ${flower(-30,10,'#ff7aa8').replace('r="4"','r="7"')}${flower(-8,16,'#ffd23f').replace('r="4"','r="7"')}${flower(18,8,'#ff7aa8').replace('r="4"','r="7"')}${flower(38,14,'#fff').replace('r="4"','r="7"')}
+     <path d="M0,-44 l7,14 l15,2 l-11,10 l3,15 l-14,-8 l-14,8 l3,-15 l-11,-10 l15,-2z" fill="#ffd23f" stroke="#d99a00" stroke-width="2.5" stroke-linejoin="round"/>`;
+  }
+}
+
+/* ============================================================
+   PANTALLAS
+   ============================================================ */
+function hudHTML(){
+  const pct = Math.round(doneCount()/totalActs()*100);
+  return `<div class="hud"><span class="pill">★ <b>${starCount()}</b></span><span class="pill">🏅 <b>${medalCount()}</b>/${PLACES.length}</span><span class="pill">✨ <b>${points()}</b> puntos</span></div>
+   <div class="bar" role="progressbar" aria-label="Progreso de la aventura" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div>`;
+}
+
+function homeHTML(){
+  const logo = CONFIG.logoColegio ? `<div class="logo-slot"><img src="${esc(CONFIG.logoColegio)}" alt="Logo del colegio"></div>`
+    : `<div class="logo-slot" title="Aquí va el logo del colegio"><span class="logo-ico">🏫</span>Logo del colegio</div>`;
+  return `<section class="screen home">
+    <svg class="bg" viewBox="0 0 400 700" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${worldSVG()}</svg>
+    ${logo}
+    <h1>El Mundo Mágico de los<em>Pegajositos Ecológicos</em></h1>
+    <div class="crowd" aria-label="Los ocho Pegajositos">${CHARS.map(c=>`<div>${cimg(c.id)}</div>`).join('')}</div>
+    <p class="hello">¡Hola, explorador! ¿Listo para aprender y salvar nuestro mundo?</p>
+    <button class="btn big" data-act="go" data-to="map">¡EMPEZAR AVENTURA!</button>
+    <button class="btn white" data-act="go" data-to="chars">Conocer a los Pegajositos</button>
+  </section>`;
+}
+
+function pill(t,c){ const w=Math.max(110,t.length*6.6+22); return `<rect x="${-w/2}" y="-13" width="${w}" height="26" rx="13" fill="#fff" stroke="${c}" stroke-width="3"/><text y="5.5" text-anchor="middle" font-size="12" font-weight="800" fill="#17375e" font-family="Baloo 2, sans-serif">${esc(t)}</text>`; }
+function mapHTML(){
+  let nodes = '';
+  PLACES.forEach(p=>{
+    const locked = isLocked(p), done = placeDone(p), started = p.acts.some(a=>S.done[a.id]);
+    const cls = locked ? 'locked' : done ? 'done' : 'avail';
+    const badge = locked ? '🔒' : done ? '✓' : started ? '★' : '!';
+    const bcol = locked ? '#8da0ad' : done ? '#22a055' : '#ff9d00';
+    const side = p.x > 200 ? -1 : 1; // el compañero se asoma hacia el centro
+    const cx = side*62;
+    const label = p.short.length>9 ? p.name : p.name;
+    nodes += `<g class="node ${cls}" role="button" tabindex="0" data-act="place" data-id="${p.id}" aria-label="${esc(p.name)}${locked?' (bloqueado)':done?' (completado)':''}" transform="translate(${p.x} ${p.y})">
+      <circle class="halo" r="50" fill="#fff6a8" opacity=".55"/>
+      <g class="nbody">
+        <circle r="58" fill="#fff" fill-opacity="0"/>
+        <ellipse cx="0" cy="40" rx="56" ry="9" fill="#17375e" opacity=".14"/>
+        ${placeArt(p.id)}
+        <image href="img/p${p.char}.webp" x="${cx-30}" y="-34" width="60" height="62" preserveAspectRatio="xMidYMid meet"/>
+        <g transform="translate(${-side*40} -40)"><circle r="14" fill="${bcol}" stroke="#fff" stroke-width="3.5"/><text y="6" text-anchor="middle" font-size="${locked?13:16}" font-weight="800" fill="#fff" font-family="Baloo 2, sans-serif">${badge}</text></g>
+        <g transform="translate(0 56)">${pill(p.name,p.color)}</g>
+      </g><circle class="nring" r="62"/></g>`;
+  });
+  nodes += `<g class="node avail" role="button" tabindex="0" data-act="go" data-to="logros" aria-label="Jardín de las Recompensas" transform="translate(105 150)">
+      <g class="nbody"><circle r="58" fill="#fff" fill-opacity="0"/><ellipse cx="0" cy="34" rx="58" ry="9" fill="#17375e" opacity=".12"/>${placeArt('jardin')}
+      <g transform="translate(0 58)">${pill('Jardín de las Recompensas','#e8a600')}</g></g><circle class="nring" r="62"/></g>`;
+  return `<section class="screen">
+    ${hudHTML()}
+    <h2 class="title" style="margin:14px 0 10px">¡Explora el mundo!</h2>
+    <div class="map-wrap"><svg viewBox="0 0 400 700" role="group" aria-label="Mapa del mundo mágico">
+      ${worldSVG()}
+      <path d="${TRAIL}" fill="none" stroke="#fff3c4" stroke-width="12" stroke-linecap="round" stroke-dasharray="2 18" opacity=".95"/>
+      ${nodes}
+    </svg></div>
+    <p class="hint-line">Toca un lugar para empezar. ✓ completado · ! nuevo · 🔒 por abrir</p>
+  </section>`;
+}
+
+function placeHTML(){
+  const p = V.place, ch = charById(p.char), done = placeDone(p);
+  const next = p.acts.find(a=>!S.done[a.id]) || p.acts[0];
+  return `<section class="screen">
+    <button class="btn white small back" data-act="go" data-to="map">← Volver al mapa</button>
+    <div class="place-head" style="background:linear-gradient(135deg,${p.color},${p.color2})">
+      <h2>${esc(p.name)}</h2>
+      <div class="say">${cimg(p.char)}<div class="bubble">${esc(p.story)}</div></div>
+    </div>
+    <div class="acts">
+      ${p.acts.map((a,i)=>`<button class="act" data-act="start" data-id="${a.id}"><span class="ic" style="background:${p.color}22">${a.icon}</span>
+        <span><h3>${esc(a.title)}</h3><small>${esc(a.sub)}</small></span>${S.done[a.id]?starsHTML(S.done[a.id]):'<span class="tag" style="background:'+p.color+';margin-left:auto">¡Jugar!</span>'}</button>`).join('')}
+    </div>
+    <div class="medal-row"><div class="medal ${done?'':'off'}" style="width:64px;height:64px;font-size:2rem;border-width:3px;box-shadow:none;animation:none">🏅</div>
+      <div style="flex:1"><h3 style="font-size:1.2rem">${done?'¡Medalla conseguida!':'Medalla del lugar'}</h3><small style="color:var(--ink2)">${done?'Completaste todas las actividades.':`Completa las ${p.acts.length} actividades para ganarla.`}</small></div></div>
+    <div class="row" style="margin-top:18px"><button class="btn green big" style="animation:none;font-size:1.5rem" data-act="start" data-id="${next.id}">${done?'Jugar otra vez':'¡Jugar!'}</button></div>
+  </section>`;
+}
+
+function charsHTML(){
+  return `<section class="screen"><h2 class="title" style="margin:6px 0 4px">¡Conoce a los Pegajositos!</h2><p style="margin:0;color:var(--ink2)">Toca a un amigo para saludarlo.</p>
+    <div class="cards">${CHARS.map(c=>`<button class="pcard" data-act="char" data-id="${c.id}">${cimg(c.id)}<h3>${esc(c.name)}</h3><span class="tag" style="background:${c.color}">${esc(c.value)}</span>${S.seen[c.id]?'':'<span style="position:absolute;top:8px;right:10px;font-size:1.4rem" aria-hidden="true">✨</span>'}</button>`).join('')}</div>
+  </section>`;
+}
+
+function logrosHTML(){
+  return `<section class="screen">${hudHTML()}
+    <h2 class="title" style="margin:16px 0 0">Jardín de las Recompensas</h2>
+    <h3 class="sec">Medallas</h3>
+    <div class="cards" style="grid-template-columns:repeat(2,1fr)">${PLACES.map(p=>`<div class="badge ${S.medals[p.id]?'':'off'}"><div class="bi">🏅</div><b>${esc(p.name)}</b><small>${S.medals[p.id]?'¡Conseguida!':placeDone(p)?'':'Aún por ganar'}</small></div>`).join('')}</div>
+    <h3 class="sec">Insignias</h3>
+    <div class="badges">${BADGES.map(b=>`<div class="badge ${b.ok()?'':'off'}"><div class="bi">${b.ic}</div><b>${esc(b.name)}</b><small>${esc(b.desc)}</small></div>`).join('')}</div>
+    <div class="row" style="margin-top:26px"><button class="btn white small" data-act="askreset">Reiniciar mi progreso</button></div>
+  </section>`;
+}
+
+/* ---------- Actividades ---------- */
+function coachHTML(){
+  const r = V.run, m = r.msg;
+  const tone = m ? m.tone : '';
+  const text = m ? m.text : (r.act.intro || r.act.prompt || '¡Vamos allá!');
+  return `<div class="coach"><div class="coachimg ${r.react||'idle'}">${cimg(r.char)}</div><div class="bubble ${tone}" role="status" aria-live="polite">${esc(text)}</div></div>`;
+}
+function dotsHTML(){
+  const r=V.run; const n=r.total;
+  return `<div class="dots" aria-hidden="true">${Array.from({length:n},(_,i)=>`<i class="${i<r.progress?'d':i===r.progress?'c':''}"></i>`).join('')}</div>`;
+}
+
+function stageHTML(){
+  const r=V.run, a=r.act;
+  if(a.type==='quiz' || a.type==='tf'){
+    const q=a.qs[r.step];
+    const body = a.type==='quiz'
+      ? `<div class="opts">${q.opts.map((o,i)=>`<button class="opt ${r.ok&&i===q.a?'right':r.wrong.includes(i)?'nope':''}" data-act="pick" data-i="${i}" ${r.ok||r.wrong.includes(i)?'disabled':''}>${esc(o)}</button>`).join('')}</div>`
+      : `<div class="tf">${[true,false].map((v,i)=>`<button class="opt ${r.ok&&v===q.a?'right':r.wrong.includes(i)?'nope':''}" data-act="pick" data-i="${i}" ${r.ok||r.wrong.includes(i)?'disabled':''}>${v?'✓ Verdadero':'✗ Falso'}</button>`).join('')}</div>`;
+    return `<div class="stage"><div class="scene" aria-hidden="true">${q.icon}</div><h2 class="q">${esc(q.q)}</h2>${body}</div>`;
+  }
+  if(a.type==='situation'){
+    const q=a.qs[r.step];
+    return `<div class="stage"><div class="scene" aria-hidden="true">${q.icon}</div><h2 class="q">${esc(q.text)}</h2><p class="tip">¿Qué harías?</p>
+      <div class="opts">${q.ch.map((c,i)=>`<button class="opt ${r.ok&&c.good?'right':r.wrong.includes(i)?'nope':''}" data-act="pick" data-i="${i}" ${r.ok||r.wrong.includes(i)?'disabled':''}>${esc(c.t)}</button>`).join('')}</div></div>`;
+  }
+  if(a.type==='find'){
+    return `<div class="stage"><h2 class="q">${esc(a.prompt)}</h2><p class="tip">Encontradas: <b>${r.found.length}</b> de ${a.need}</p>
+      <div class="tiles">${a.tiles.map((t,i)=>`<button class="tile ${r.found.includes(i)?'right':r.wrong.includes(i)?'nope':''}" data-act="tile" data-i="${i}" ${r.found.includes(i)||r.ok?'disabled':''}><span class="big" aria-hidden="true">${t.icon}</span>${esc(t.label)}</button>`).join('')}</div></div>`;
+  }
+  if(a.type==='sort'){
+    const sel=r.sel;
+    return `<div class="stage"><p class="tip">${sel?'¡Ahora toca la caneca correcta!':'Toca un objeto o arrástralo a su caneca.'}</p>
+      <div class="bins">${a.bins.map(b=>`<button class="bin ${sel?'target':''}" data-act="bin" data-bin="${b.id}" style="background:${b.color};color:${b.fg}" aria-label="Caneca ${esc(b.label)}: ${esc(b.sub)}">
+        <span class="lid"></span><span class="cnt" aria-hidden="true">${(r.placed[b.id]||[]).map(i=>i.icon).join('')}</span><span>${esc(b.label)}</span><small>${esc(b.sub)}</small></button>`).join('')}</div>
+      <div class="chips">${r.left.map(i=>`<button class="chip ${sel===i.id?'sel':''}" data-act="chip" data-item="${i.id}"><span class="em" aria-hidden="true">${i.icon}</span>${esc(i.label)}</button>`).join('')}</div></div>`;
+  }
+  return '';
+}
+
+function playerHTML(){
+  const r=V.run;
+  const foot = r.ready ? `<button class="btn green" data-act="next">${r.progress>=r.total?'¡Terminar!':'Continuar →'}</button>` : '';
+  return `<section class="screen">
+    <div class="ptop"><button class="btn white small" data-act="exit">← Salir</button>${dotsHTML()}</div>
+    ${coachHTML()}${stageHTML()}<div class="pfoot">${foot}</div></section>`;
+}
+
+function resultHTML(){
+  const R=V.res, p=R.place, a=R.act;
+  const idx=p.acts.findIndex(x=>x.id===a.id), nxt=p.acts[idx+1];
+  const msg = R.stars===3?'¡Perfecto! Aprendiste un montón.':R.stars===2?'¡Muy bien! Cada intento te hace más sabio.':'¡Lo completaste! Practicando, cada vez te irá mejor.';
+  return `<section class="screen"><div class="result">
+    <h2 class="title">${R.newMedal?'¡Medalla conseguida!':'¡Reto superado!'}</h2>
+    ${cimg(p.char)}
+    <div class="big-stars" aria-label="${R.stars} estrellas">${[1,2,3].map(i=>`<span style="color:${i<=R.stars?'#ffb800':'#cfdbe2'};text-shadow:0 4px 0 ${i<=R.stars?'#c98a00':'#b7c7d0'}">★</span>`).join('')}</div>
+    ${R.newMedal?`<div class="medal">🏅</div><div class="bubble" style="flex:none">¡Completaste ${esc(p.name)}! Ganaste su medalla.</div>`:`<div class="bubble" style="flex:none">${esc(msg)}</div>`}
+    <div class="row" style="margin-top:6px">
+      ${nxt?`<button class="btn green" data-act="start" data-id="${nxt.id}">Siguiente reto →</button>`:`<button class="btn green" data-act="go" data-to="map">Volver al mapa</button>`}
+      <button class="btn white" data-act="start" data-id="${a.id}">↺ Repetir</button>
+      ${nxt?`<button class="btn white" data-act="go" data-to="map">Mapa</button>`:`<button class="btn white" data-act="go" data-to="logros">Mis logros</button>`}
+    </div></div></section>`;
+}
+
+function navHTML(){
+  const tabs=[['home','🏠','Inicio'],['map','🗺️','Explorar'],['chars','🤗','Personajes'],['logros','🏆','Mis logros']];
+  const cur = V.screen==='place'||V.screen==='result' ? 'map' : V.screen;
+  return `<div class="nav"><nav aria-label="Menú principal">${tabs.map(t=>`<button data-act="go" data-to="${t[0]}" class="${cur===t[0]?'on':''}" ${cur===t[0]?'aria-current="page"':''}><span class="ni" aria-hidden="true">${t[1]}</span>${t[2]}</button>`).join('')}</nav></div>`;
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function render(){
+  const s=V.screen;
+  const map={home:homeHTML,map:mapHTML,place:placeHTML,chars:charsHTML,logros:logrosHTML,play:playerHTML,result:resultHTML};
+  const key = s + (V.place?V.place.id:'') + (V.run?V.run.act.id+':'+V.run.step:'') + (V.res?'r':'');
+  $app.innerHTML = map[s]() + (s==='play'||s==='home'?'':navHTML());
+  if(s==='home') $app.innerHTML += '';
+  if(key!==lastKey){ window.scrollTo(0,0); lastKey=key; }
+  renderOverlay();
+}
+function renderOverlay(){
+  let h='';
+  if(V.sheet){
+    const c=charById(V.sheet);
+    h=`<div class="sheet-bg" data-act="closesheet"><div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(c.name)}" data-stop>
+      ${cimg(c.id)}<h2>${esc(c.name)}</h2><span class="tag" style="background:${c.color};font-size:1.1rem">Valor: ${esc(c.value)}</span>
+      <p>“${esc(c.phrase)}”</p><button class="btn green" data-act="closesheet">¡Hola, ${esc(c.name.replace('Pegajosito ',''))}!</button></div></div>`;
+  }
+  if(V.confirm){
+    h=`<div class="sheet-bg" style="place-items:center"><div class="sheet mid" role="alertdialog" aria-modal="true" aria-label="Reiniciar progreso" data-stop>
+      <h2>¿Empezar de nuevo?</h2><p>Se borrarán tus estrellas, medallas e insignias en este dispositivo.</p>
+      <div class="row"><button class="btn white" data-act="cancelreset">No, quiero conservarlas</button><button class="btn red" data-act="doreset">Sí, reiniciar</button></div></div></div>`;
+  }
+  $ov.innerHTML=h;
+}
+function toast(t){
+  const el=document.createElement('div'); el.className='toast'; el.setAttribute('role','status'); el.textContent=t; document.body.appendChild(el);
+  setTimeout(()=>el.remove(),2800);
+}
+function confetti(n=44){
+  if(reduceMotion()) return;
+  const cols=['#ffd23f','#ff6b6b','#5fd0ff','#7ed957','#c084fc','#ff9ec0'];
+  for(let i=0;i<n;i++){
+    const e=document.createElement('i'); e.style.left=Math.random()*100+'vw'; e.style.background=rnd(cols);
+    e.style.animationDuration=(1.8+Math.random()*1.8)+'s'; e.style.animationDelay=(Math.random()*.5)+'s'; e.style.transform=`rotate(${Math.random()*360}deg)`;
+    $fx.appendChild(e); setTimeout(()=>e.remove(),4200);
+  }
+}
+
+/* ============================================================
+   LÓGICA DE ACTIVIDADES
+   ============================================================ */
+function startAct(actId){
+  let place=null, act=null;
+  PLACES.forEach(p=>p.acts.forEach(a=>{ if(a.id===actId){place=p;act=a;} }));
+  if(!act) return;
+  if(isLocked(place)){ toast(`Consigue ${place.needMedals} medallas para abrir este lugar.`); return; }
+  const total = act.type==='sort' ? act.items.length : act.type==='find' ? act.need : act.qs.length;
+  V.place=place; V.res=null;
+  V.run={act, place, char:place.char, step:0, progress:0, total, mistakes:0, ok:false, ready:false, wrong:[], found:[], msg:null, react:'idle',
+         left: act.type==='sort' ? act.items.map(i=>i).sort(()=>Math.random()-.5) : [], placed:{}, sel:null};
+  V.screen='play'; render();
+}
+function helperChar(r){ return r.place.helpers.includes(r.char) ? r.char : r.place.char; }
+function say(tone, text, react){ const r=V.run; r.msg={tone,text}; r.react=react; }
+function good(extra){ const r=V.run; say('ok', rnd(MSG_OK)+(extra?' '+extra:''),'happy'); }
+function oops(extra){ const r=V.run; r.mistakes++; say('hint', rnd(MSG_RETRY)+(extra?' '+extra:''),'wiggle'); }
+
+function pick(i){
+  const r=V.run, a=r.act; if(r.ok) return;
+  if(a.type==='quiz'){ const q=a.qs[r.step]; if(i===q.a){ r.ok=true; r.ready=true; r.progress=r.step+1; good(q.why); } else { r.wrong.push(i); oops(q.hint); } }
+  else if(a.type==='tf'){ const q=a.qs[r.step]; const val = i===0; if(val===q.a){ r.ok=true; r.ready=true; r.progress=r.step+1; good(q.why); } else { r.wrong.push(i); oops(q.why); } }
+  else if(a.type==='situation'){ const q=a.qs[r.step], c=q.ch[i];
+    if(c.good){ r.ok=true; r.ready=true; r.progress=r.step+1; say('ok', rnd(MSG_OK)+' '+c.res,'happy'); }
+    else { r.wrong.push(i); r.mistakes++; say('hint', c.res,'wiggle'); } }
+  render(); if(r.ok&&r.react==='happy') confetti(18);
+}
+function tile(i){
+  const r=V.run, a=r.act, t=a.tiles[i]; if(r.ok||r.found.includes(i)) return;
+  if(t.waste){ r.found.push(i); r.progress=r.found.length; good(t.why);
+    if(r.found.length>=a.need){ r.ok=true; r.ready=true; say('ok','¡Los encontraste todos! '+rnd(MSG_OK),'happy'); confetti(18);} }
+  else { r.wrong.includes(i)||r.wrong.push(i); r.mistakes++; say('hint','¡Esa acción ayuda al agua! Busca las que la gastan de más.','wiggle'); }
+  render();
+}
+function attempt(itemId, binId){
+  const r=V.run, a=r.act, it=r.left.find(x=>x.id===itemId); if(!it) return;
+  if(it.bin===binId){
+    r.left=r.left.filter(x=>x.id!==itemId); (r.placed[binId]=r.placed[binId]||[]).push(it); r.sel=null; r.progress++;
+    good(it.hint);
+    if(!r.left.length){ r.ready=true; say('ok','¡Terminaste de separar todo! '+rnd(MSG_OK),'happy'); confetti(26); }
+  } else { r.mistakes++; r.sel=null; say('hint', rnd(MSG_RETRY)+' '+it.hint,'wiggle'); }
+  render();
+}
+function nextStep(){
+  const r=V.run, a=r.act;
+  if(a.type==='sort' || a.type==='find' || r.step>=a.qs.length-1){ finish(); return; }
+  r.step++; r.ok=false; r.ready=false; r.wrong=[]; r.msg=null; r.react='idle'; r.char = rnd(r.place.helpers);
+  render();
+}
+function finish(){
+  const r=V.run, p=r.place, a=r.act;
+  const stars = r.mistakes===0?3 : r.mistakes<=2?2 : 1;   // premia aprender y persistir, no la rapidez
+  S.done[a.id] = Math.max(S.done[a.id]||0, stars);
+  let newMedal=false;
+  if(placeDone(p) && !S.medals[p.id]){ S.medals[p.id]=true; newMedal=true; }
+  saveState();
+  V.res={stars,newMedal,place:p,act:a}; V.run=null; V.screen='result'; render();
+  confetti(newMedal?90:50);
+}
+
+/* ---------- arrastrar y soltar (con alternativa por toques) ---------- */
+let drag=null, lastDrop=0;
+document.addEventListener('pointerdown',e=>{
+  const c=e.target.closest&&e.target.closest('.chip'); if(!c||!V.run||V.run.act.type!=='sort') return;
+  drag={id:c.dataset.item,x:e.clientX,y:e.clientY,el:c,moved:false,ghost:null};
+});
+document.addEventListener('pointermove',e=>{
+  if(!drag) return;
+  if(!drag.moved && Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>10){
+    drag.moved=true; const g=drag.el.cloneNode(true); g.classList.add('ghost'); g.style.width=drag.el.offsetWidth+'px'; document.body.appendChild(g); drag.ghost=g; drag.el.classList.add('lifted');
+  }
+  if(drag.moved){
+    drag.ghost.style.left=e.clientX+'px'; drag.ghost.style.top=e.clientY+'px';
+    document.querySelectorAll('.bin').forEach(b=>b.classList.remove('over'));
+    const b=document.elementFromPoint(e.clientX,e.clientY); const bin=b&&b.closest&&b.closest('.bin'); if(bin) bin.classList.add('over');
+  }
+});
+function endDrag(e,cancel){
+  if(!drag) return; const d=drag; drag=null;
+  if(d.ghost) d.ghost.remove(); d.el.classList.remove('lifted'); document.querySelectorAll('.bin').forEach(b=>b.classList.remove('over'));
+  if(d.moved){
+    lastDrop=Date.now();
+    if(!cancel){ const t=document.elementFromPoint(e.clientX,e.clientY); const bin=t&&t.closest&&t.closest('.bin'); if(bin&&V.run) attempt(d.id,bin.dataset.bin); }
+  }
+}
+document.addEventListener('pointerup',e=>endDrag(e,false));
+document.addEventListener('pointercancel',e=>endDrag(e,true));
+
+/* ============================================================
+   EVENTOS
+   ============================================================ */
+function go(to){
+  V.run=null; V.res=null; V.sheet=null; V.confirm=false; V.screen=to; if(to!=='place') V.place=to==='map'?null:V.place; render();
+}
+function onAct(el,e){
+  const act=el.dataset.act, d=el.dataset;
+  switch(act){
+    case 'go': go(d.to); break;
+    case 'place': { const p=placeById(d.id); if(isLocked(p)){ toast(`Consigue ${p.needMedals} medallas para abrir la ${p.name}.`); break; } V.place=p; V.screen='place'; render(); break; }
+    case 'start': startAct(d.id); break;
+    case 'exit': V.run=null; V.screen='place'; render(); break;
+    case 'pick': pick(+d.i); break;
+    case 'tile': tile(+d.i); break;
+    case 'chip': { if(Date.now()-lastDrop<400) break; const r=V.run; r.sel = r.sel===d.item?null:d.item; render(); break; }
+    case 'bin': { if(Date.now()-lastDrop<400) break; const r=V.run; if(!r.sel){ say('hint','Primero toca un objeto y luego su caneca.','wiggle'); render(); } else attempt(r.sel,d.bin); break; }
+    case 'next': nextStep(); break;
+    case 'char': { V.sheet=+d.id; S.seen[d.id]=true; saveState(); render(); break; }
+    case 'closesheet': if(e.target.closest('[data-stop]') && !e.target.closest('.btn')) break; V.sheet=null; render(); break;
+    case 'askreset': V.confirm=true; render(); break;
+    case 'cancelreset': V.confirm=false; render(); break;
+    case 'doreset': S={done:{},medals:{},seen:{}}; saveState(); V.confirm=false; render(); toast('¡Listo! Puedes empezar una nueva aventura.'); break;
+  }
+}
+const $app=document.getElementById('app'), $ov=document.getElementById('overlay'), $fx=document.getElementById('fx');
+document.addEventListener('click',e=>{ const el=e.target.closest&&e.target.closest('[data-act]'); if(el) onAct(el,e); });
+document.addEventListener('keydown',e=>{
+  if((e.key==='Enter'||e.key===' ') && e.target.matches && e.target.matches('g[data-act]')){ e.preventDefault(); onAct(e.target,e); }
+  if(e.key==='Escape'&&(V.sheet||V.confirm)){ V.sheet=null; V.confirm=false; render(); }
+});
+render();
+</script>
+
+</body></html>
